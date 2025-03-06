@@ -10,37 +10,53 @@ export const useAppStore = defineStore("app", () => {
     const updateSerialports = async () => {
         try {
             serialports.value = await commandGetSerialports();
+            msg.value = undefined;
         }
         catch (err) {
             msg.value = `获取串口列表失败： ${err}`;
         }
     };
+
     const setSerialport = async (name: string) => {
         try {
+            if (port.value === name) {
+                return;
+            }
             await commandSetSerialport(name);
             port.value = name;
+            msg.value = undefined;
         }
         catch (err) {
             msg.value = `无法连接到串口： ${err}`;
         }
     };
+
     const updateDataSeq = async () => {
         try {
             dataSeq.value = await commandGetDataSeq();
+            msg.value = undefined;
         }
         catch (err) {
             msg.value = `无法获取数据： ${err}`;
             port.value = undefined;
         }
     };
+
+    const getSerialports = computed(() => {
+        return serialports.value;
+    });
+
     const getPort = computed(() => {
         return port.value;
     });
+
     const getDataSeq = computed(() => {
         return dataSeq.value;
     });
+
     const getMsg = computed(() => {
         return msg.value;
     });
-    return { updateSerialports, setSerialport, updateDataSeq, getPort, getDataSeq, getMsg };
+
+    return { updateSerialports, setSerialport, updateDataSeq, getSerialports, getPort, getDataSeq, getMsg };
 })
