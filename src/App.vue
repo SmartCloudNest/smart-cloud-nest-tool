@@ -1,54 +1,17 @@
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { invoke } from "@tauri-apps/api/core";
-
-// 串口相关状态
-const selectedPort = ref("");
-const serialPorts = ref<string[]>([]);
-const serialData = ref<number[]>([]);
-const errorMsg = ref("");
-
-// 初始化时获取可用串口列表
-onMounted(async () => {
-  try {
-    serialPorts.value = await invoke("command_get_serialports");
-  } catch (err) {
-    errorMsg.value = `获取串口失败: ${err}`;
-  }
-});
-
-// 设置选中的串口
-async function setSerialPort() {
-  if (!selectedPort.value) return;
-
-  try {
-    await invoke("command_set_serialport", { name: selectedPort.value });
-    errorMsg.value = "";
-  } catch (err) {
-    errorMsg.value = `连接串口失败: ${err}`;
-  }
-}
-
-// 获取串口数据
-async function getSerialData() {
-  try {
-    const data = await invoke<number[]>("command_get_serial_data");
-    serialData.value = data;
-    errorMsg.value = "";
-  } catch (err) {
-    errorMsg.value = `读取数据失败: ${err}`;
-  }
-}
-</script>
-
 <template>
-  <main class="container">
-    <!-- 串口选择区域 -->
-    <div class="row">
-      <select v-model="selectedPort" class="custom-select">
-        <option disabled value="">请选择串口</option>
+  <div class="container">
+    <!-- 串口操作区域 -->
+    <div class="control-group">
+      <button @click="store.updateSerialports">刷新串口列表</button>
+      
+      <select 
+        v-model="selectedPort"
+        @change="handlePortChange"
+        :disabled="!store.serialports?.length"
+      >
+        <option value="">请选择串口</option>
         <option 
-          v-for="port in serialPorts" 
+          v-for="port in store.serialports" 
           :key="port" 
           :value="port"
         >
@@ -57,34 +20,117 @@ async function getSerialData() {
       </select>
       
       <button 
-        @click="setSerialPort" 
-        :disabled="!selectedPort"
-        class="action-button"
-      >
-        连接串口
-      </button>
-    </div>
-
-    <!-- 数据操作区域 -->
-    <div class="row">
-      <button 
-        @click="getSerialData" 
-        :disabled="!selectedPort"
-        class="data-button"
+        @click="store.updateDataSeq"
+        :disabled="!store.getPort"
+        class="primary"
       >
         获取数据
       </button>
     </div>
 
-    <!-- 数据显示 -->
-    <div v-if="serialData.length" class="data-container">
-      <h3>接收数据 (十六进制):</h3>
-      <pre>{{ serialData.map(b => b.toString(16).padStart(2, '0')).join(' ') }}</pre>
+    <!-- 状态显示 -->
+    <div class="status-group">
+      <p>当前连接：{{ store.getPort || '未连接' }}</p>
+      <div v-if="store.getMsg" class="error">
+        {{ store.getMsg }}
+      </div>
     </div>
 
-    <!-- 错误信息 -->
-    <div v-if="errorMsg" class="error-message">
-      {{ errorMsg }}
+    <!-- 数据展示 -->
+    <div v-if="store.getDataSeq" class="data-container">
+      <h3>数据序列：</h3>
+      <div class="data-grid">
+        <div 
+          v-for="(value, index) in store.getDataSeq" 
+          :key="index"
+          class="data-item"
+        >
+          {{ value }}
+        </div>
+      </div>
     </div>
-  </main>
+  </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useAppStore } from './store'
+
+const store = useAppStore()
+const selectedPort = ref<string>('')
+
+// 自动初始化串口列表
+onMounted(() => {
+  store.updateSerialports()
+})
+
+// 处理端口选择变化
+const handlePortChange = async () => {
+  if (selectedPort.value) {
+    await store.setSerialport(selectedPort.value)
+    selectedPort.value = '' // 清空选择器值
+  }
+}
+</script>
+
+<style scoped>
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.control-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+select {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+}
+
+button.primary {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.status-group {
+  margin-bottom: 2rem;
+}
+
+.error {
+  color: #dc3545;
+  margin-top: 0.5rem;
+}
+
+.data-container {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.data-item {
+  padding: 0.5rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  text-align: center;
+  border-radius: 4px;
+}
+</style>
