@@ -64,6 +64,11 @@ impl AppState {
         }
         Err(Error::msg("Serial port not selected!"))
     }
+
+    pub async fn reset_serialport(&self) -> Result<()> {
+        let _ = self.serial.lock().await.take();
+        Ok(())
+    }
 }
 
 pub async fn get_serialports() -> Result<Vec<String>> {

@@ -11,3 +11,7 @@ export async function commandGetSerialports(): Promise<string[]> {
 export async function commandGetDataSeq(): Promise<number[]> {
     return await invoke<number[]>("command_get_data_seq", {})
 }
+
+export async function commandResetSerialport(): Promise<void> {
+    await invoke<void>("command_reset_serialport", {});
+}

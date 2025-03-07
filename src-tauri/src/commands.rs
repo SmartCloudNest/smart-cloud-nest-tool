@@ -25,6 +25,13 @@ pub async fn command_get_data_seq(state: State<'_, AppState>) -> Result<Vec<u8>,
 }
 
 #[command]
+pub async fn command_reset_serialport(state: State<'_, AppState>) -> Result<(), String> {
+    state.reset_serialport()
+    .await
+    .or_else(|err| Err(err.to_string()))
+}
+
+#[command]
 pub async fn command_get_serialports() -> Result<Vec<String>, String> {
     get_serialports().await.or_else(|err| Err(err.to_string()))
 }
