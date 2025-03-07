@@ -25,7 +25,7 @@ impl Default for AppState {
 impl AppState {
     pub async fn set_serialport(&self, name: String) -> Result<()> {
         let port = serialport::new(name, BAUD_RATE)
-            .timeout(Duration::from_millis(10))
+            .timeout(Duration::from_millis(100))
             .open()
             .map_err(|err| Error::new(err))?;
         self.serial.lock().await.replace(port);

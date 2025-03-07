@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue';
+import { onMounted } from 'vue';
 import { useAppStore } from './store';
 
 const store = useAppStore();
@@ -9,24 +9,16 @@ onMounted(() => {
   store.updateSerialports();
 });
 
-// 监听选择的串口，当成功连接时开始自动获取数据
-watch(
-  () => store.getPort,
-  (newPort) => {
-    if (newPort) {
-      // 连接成功后立即获取数据
-      store.setSerialport(newPort);
-      // 设置定时轮询数据（每秒一次）
-      const timer = setInterval(() => {
-        if (store.getPort) {  // 确保仍处于连接状态
-          store.updateDataSeq();
-        } else {
-          clearInterval(timer);
-        }
-      }, 1000);
-    }
+setInterval(() => {
+  store.updateSerialports();
+}, 500);
+
+setInterval(() => {
+  if (store.getPort) {
+    store.updateDataSeq();
   }
-);
+}, 150);
+
 </script>
 
 <template>
@@ -54,7 +46,6 @@ watch(
           {{ port }}
         </option>
       </select>
-      <button @click="store.updateSerialports">刷新列表</button>
     </div>
 
     <!-- 连接状态显示 -->
@@ -83,81 +74,3 @@ watch(
     </div>
   </div>
 </template>
-
-<style scoped>
-.container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-}
-
-.error-message {
-  color: #dc3545;
-  background: #f8d7da;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-.control-group {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-select {
-  padding: 5px 10px;
-  min-width: 200px;
-}
-
-button {
-  padding: 5px 10px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #0056b3;
-}
-
-.status {
-  margin: 15px 0;
-  font-weight: bold;
-}
-
-.disconnected {
-  color: #6c757d;
-}
-
-.data-container {
-  margin-top: 20px;
-}
-
-.data-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-}
-
-.data-item {
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.index {
-  color: #6c757d;
-  font-size: 0.8em;
-}
-
-.value {
-  display: block;
-  font-size: 1.2em;
-  font-weight: bold;
-}
-</style>

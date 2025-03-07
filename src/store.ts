@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { commandGetSerialports, commandSetSerialport, commandGetDataSeq } from "./serial";
+import { commandGetSerialports, commandSetSerialport, commandGetDataSeq } from "./commands";
 import { defineStore } from "pinia";
 
 export const useAppStore = defineStore("app", () => {
