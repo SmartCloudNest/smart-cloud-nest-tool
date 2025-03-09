@@ -176,7 +176,7 @@ setInterval(() => {
   if (store.serialState === SerialState.Connected) { // 检查连接状态
     store.updateDataSeq();
   }
-}, 200);
+}, );
 </script>
 
 <style scoped>
