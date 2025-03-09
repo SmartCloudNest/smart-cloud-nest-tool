@@ -1,16 +1,15 @@
-import { onUnmounted, ref } from 'vue';
+import { ref } from 'vue';
 import { commandGetSerialports, commandConnectPort, commandGetDataSeq, commandResetPort } from '../commands';
 import { defineStore } from 'pinia';
 
-enum SerialState {
+export enum SerialState {
     Disconnected,
     Connecting,
     Connected,
-    Retry,
 
 }
 
-export const useAppStore = defineStore('app', () => {
+export const usePortStore = defineStore('port', () => {
     const dataSeq = ref<number[]>([]);
     const serialports = ref<string[]>([]);
     const port = ref<string | null>(null);
@@ -20,41 +19,55 @@ export const useAppStore = defineStore('app', () => {
         serialports.value = await commandGetSerialports();
     }
 
-    async function updateDataSeq(): Promise<void | Error> {
+    async function updateDataSeq(): Promise<void> {
+        if (!port.value) {
+            return;
+        }
         try {
             dataSeq.value = await commandGetDataSeq();
         } catch (err) {
-
-            return new Error(`${err}`);
+            serialState.value = SerialState.Disconnected;
+            throw new Error(`${err}`);
         }
     };
 
     async function resetSerialport(): Promise<void> {
         await commandResetPort();
-        port.value = null;
     };
 
-    async function connectPort(name: string): Promise<void | Error> {
+    async function connectPort(name: string): Promise<void> {
         try {
+            serialState.value = SerialState.Connecting;
             await commandConnectPort(name);
             port.value = name;
+            serialState.value = SerialState.Connected;
         } catch (err) {
-            return new Error(`${err}`);
+            throw new Error(`${err}`);
         }
     }
 
-    const intervalId = setInterval(updateSerialports, 500);
-
-    onUnmounted(() => {
-        clearInterval(intervalId);
-    })
+    async function reconnect(): Promise<void> {
+        if (!port.value) {
+            return;
+        }
+        try {
+            serialState.value = SerialState.Connecting;
+            await commandConnectPort(port.value);
+            serialState.value = SerialState.Connected;
+        } catch (err) {
+            throw new Error(`${err}`);
+        }
+    }
 
     return {
         updateSerialports,
         updateDataSeq,
         resetSerialport,
         connectPort,
+        reconnect,
         dataSeq,
         serialports,
+        serialState,
+        port,
     };
 });
