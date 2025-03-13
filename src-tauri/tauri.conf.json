@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "jq-pillow-tool",
-        "width": 1600,
-        "height": 1200
+        "width": 850,
+        "height": 690
       }
     ],
     "security": {

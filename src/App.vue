@@ -1,18 +1,35 @@
-<script setup lang="ts">
-import { computed, onMounted, watch } from 'vue';
-import { usePortStore, SerialState } from './stores/port';
+<script setup lang='ts'>
+import { computed, onMounted, onUnmounted } from 'vue';
 import {
   NSelect,
-  NAlert,
   NTag,
   NSpace,
-  NText,
-  NButton,
 } from 'naive-ui';
+import { usePortStore, SerialState } from './stores/port';
+import DataGrid from './components/DataGrid.vue';
+import { save } from '@tauri-apps/plugin-dialog';
 
 const portStore = usePortStore();
 
-// 串口选项
+async function handleClick() {
+  try {
+    const path = await save({
+      title: '创建新的数据集',
+      defaultPath: 'jq-dataset.csv',
+      filters: [{
+        name: 'Dataset',
+        extensions: ['csv'],
+      }]
+    });
+    
+    if (!path) {
+      return;
+    } 
+  } catch (err) {
+    console.error('保存失败:', err);
+  }
+}
+
 const portOptions = computed(() => {
   return portStore.serialports.map((port) => ({
     label: port,
@@ -20,112 +37,67 @@ const portOptions = computed(() => {
   }));
 });
 
-// 是否已连接
-const isConnected = computed(() => portStore.serialState === SerialState.Connected);
-
-// 是否正在连接
-const isConnecting = computed(() => portStore.serialState === SerialState.Connecting);
-
-// 按钮文本
-const buttonText = computed(() => {
-  switch (portStore.serialState) {
-    case SerialState.Connected:
-      return '断开';
-    case SerialState.Connecting:
-      return '正在连接...';
-    default:
-      return '连接';
-  }
-});
-
-// 状态标签类型
-const statusTagType = computed(() => {
-  switch (portStore.serialState) {
-    case SerialState.Connected:
-      return 'success';
-    case SerialState.Connecting:
-      return 'warning';
-    default:
-      return 'error';
-  }
-});
-
-// 状态文本
-const statusText = computed(() => {
+const tagText = computed(() => {
   switch (portStore.serialState) {
     case SerialState.Connected:
       return `已连接: ${portStore.port}`;
     case SerialState.Connecting:
-      return '正在连接...';
+      return `正在连接: ${portStore.port}`;
     default:
       return '未连接任何设备';
   }
 });
 
-// 将数据重塑为 16x10 的表格
-const reshapedData = computed(() => {
-  const data = portStore.dataSeq;
-  const reshaped = [];
-  for (let i = 0; i < 16; i++) {
-    for (let j = 0; j < 10; j++) {
-      const index = i * 10 + j;
-      reshaped.push(data[index] || '-');
-    }
+const tagType = computed(() => {
+  switch (portStore.serialState) {
+    case SerialState.Connected:
+      return 'success';
+    case SerialState.Connecting:
+      return 'info';
+    default:
+      return 'warning';
   }
-  return reshaped;
 });
 
-// 组件挂载时获取串口列表
-onMounted(() => {
-  store.updateSerialports();
-});
+const updateGrid = setInterval(portStore.updateDataGrid, 72);
+
+onMounted(portStore.updateSerialports);
+
+onUnmounted(() => clearInterval(updateGrid));
 </script>
-
 <template>
-  <div class="container">
-    <!-- 错误信息展示 -->
-    <n-alert
-      v-if="store.msg"
-      :title="store.msg"
-      type="error"
-      :bordered="false"
-      style="margin-bottom: 16px"
-    >
-      {{ store.msg }}
-    </n-alert>
-
-    <!-- 串口选择部分 -->
+  <div class='container' v-cloak>
     <n-space vertical>
-      <n-space align="center" :size="8">
+      <n-space align='center' :size='8'>
+        <n-tag :type='tagType'>
+          {{ tagText }}
+        </n-tag>
         <n-text strong>选择串口：</n-text>
         <n-select
-          v-model:value="store.selected_port"
-          :options="portOptions"
-          :disabled="!store.serialports.length"
-          placeholder="请选择串口"
-          style="width: 200px"
+          v-model:value='portStore.port'
+          v-on:update:show='portStore.updateSerialports'
+          v-on:update:value='portStore.connectPort'
+          :options='portOptions'
+          :disabled='!portStore.serialports.length'
+          placeholder='请选择串口'  
+          style='width: 200px'
         />
-        <!-- 连接/断开按钮 -->
-        <n-button
-          :type="isConnected ? 'error' : 'primary'"
-          :disabled="isConnecting || !store.selected_port"
-          :loading="isConnecting"
-          @click="handleConnection"
+        <n-text 
+          class='cursor-pointer hover:text-blue-500' 
+          @click='handleClick'
+          style="color: goldenrod; cursor: pointer;"
         >
-          {{ buttonText }}
-        </n-button>
+          >>创建新的数据集<<
+        </n-text>
       </n-space>
-
-      <!-- 连接状态显示 -->
-      <n-tag :type="statusTagType">
-        {{ statusText }}
-      </n-tag>
     </n-space>
+    <DataGrid :data-grid='portStore.dataGrid' />
   </div>
 </template>
 
 <style>
 .container {
+  overflow: hidden;
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;

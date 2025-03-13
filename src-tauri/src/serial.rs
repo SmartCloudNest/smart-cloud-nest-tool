@@ -1,5 +1,6 @@
 use anyhow::{bail, Error, Result};
 use serialport::SerialPort;
+use std::time::Duration;
 
 pub struct Port<'a, const SERIAL_BUFFER_LENGTH: usize> {
     serialport: Box<dyn SerialPort>,
@@ -17,6 +18,7 @@ impl<'a, const SERIAL_BUFFER_LENGTH: usize> Port<'a, SERIAL_BUFFER_LENGTH> {
         delimiter: &'a [u8],
         max_data_buffer_length: usize,
         target_data_field_length: usize,
+        timeout: Duration,
     ) -> Result<Self> {
         if delimiter.is_empty() {
             bail!("delimiter cannot be empty");
@@ -31,6 +33,7 @@ impl<'a, const SERIAL_BUFFER_LENGTH: usize> Port<'a, SERIAL_BUFFER_LENGTH> {
             bail!("max_data_buffer_length must be >= target_data_field");
         }
         let serialport = serialport::new(name.to_owned(), baud_rate)
+            .timeout(timeout)
             .open()
             .map_err(|err| {
                 Error::new(err).context(format!(

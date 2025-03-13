@@ -1,5 +1,5 @@
-import { ref } from 'vue';
-import { commandGetSerialports, commandConnectPort, commandGetDataSeq, commandResetPort } from '../commands';
+import { computed, ref } from 'vue';
+import { commandGetSerialports, commandConnectPort, commandGetDataGrid, commandResetPort } from '../commands';
 import { defineStore } from 'pinia';
 
 export enum SerialState {
@@ -10,48 +10,42 @@ export enum SerialState {
 }
 
 export const usePortStore = defineStore('port', () => {
-    const dataSeq = ref<number[]>([]);
+    const dataGrid = ref<number[][]>(new Array(16).fill(new Array(10).fill(0)));
     const serialports = ref<string[]>([]);
     const port = ref<string | null>(null);
     const serialState = ref<SerialState>(SerialState.Disconnected);
 
-    async function updateSerialports(): Promise<void> {
+    async function updateSerialports() {
         serialports.value = await commandGetSerialports();
     }
 
-    async function updateDataSeq(): Promise<void> {
+    async function updateDataGrid() {
         if (!port.value) {
             return;
         }
         try {
-            dataSeq.value = await commandGetDataSeq();
+            dataGrid.value = await commandGetDataGrid();
         } catch (err) {
-            serialState.value = SerialState.Disconnected;
+            try {
+                await connectPort();
+            } catch (internalErr) {
+                throw new Error(`${internalErr}`);
+            }
             throw new Error(`${err}`);
         }
     };
 
-    async function resetSerialport(): Promise<void> {
+    async function resetSerialport() {
         await commandResetPort();
     };
 
-    async function connectPort(name: string): Promise<void> {
-        try {
-            serialState.value = SerialState.Connecting;
-            await commandConnectPort(name);
-            port.value = name;
-            serialState.value = SerialState.Connected;
-        } catch (err) {
-            throw new Error(`${err}`);
-        }
-    }
-
-    async function reconnect(): Promise<void> {
+    async function connectPort() {
         if (!port.value) {
             return;
         }
         try {
             serialState.value = SerialState.Connecting;
+            await commandResetPort();
             await commandConnectPort(port.value);
             serialState.value = SerialState.Connected;
         } catch (err) {
@@ -59,15 +53,22 @@ export const usePortStore = defineStore('port', () => {
         }
     }
 
+    const isDisconnected = computed(() => serialState.value === SerialState.Disconnected);
+    const isConnecting = computed(() => serialState.value === SerialState.Connecting);
+    const isConnected = computed(() => serialState.value === SerialState.Connected);
+
     return {
         updateSerialports,
-        updateDataSeq,
+        updateDataGrid,
         resetSerialport,
         connectPort,
-        reconnect,
-        dataSeq,
+
+        dataGrid,
         serialports,
         serialState,
         port,
+        isDisconnected,
+        isConnecting,
+        isConnected,
     };
 });
