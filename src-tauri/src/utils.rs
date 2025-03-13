@@ -4,7 +4,7 @@ pub fn extract_final_grid(full_data_seq: Vec<u8>) -> Vec<Vec<u8>> {
         .map(|seq| seq[..10].to_vec())
         .take(16)
         .collect();
-    let head = grid.iter().take(7);
+    let head = grid.iter().take(9);
     let tail = grid.iter().rev().take(7);
     let mixed = head.chain(tail).cloned().collect();
     let transposed = transpose(&mixed);
@@ -13,10 +13,6 @@ pub fn extract_final_grid(full_data_seq: Vec<u8>) -> Vec<Vec<u8>> {
 
 pub fn transpose(matrix: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
     (0..matrix[0].len())
-        .map(|i| {
-            matrix.iter()
-                .map(|row| row[i])
-                .collect()
-        })
+        .map(|i| matrix.iter().map(|row| row[i]).collect())
         .collect()
 }

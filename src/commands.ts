@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 
-interface CsvRecord {
+export interface CsvRecord {
     time: number,
     tag: string,
     data: string,
@@ -23,7 +23,7 @@ export async function commandResetPort() {
 }
 
 export async function commandAppendRecord(tag: string, data: string): Promise<void> {
-    return await invoke<void>('command_append_record', {'tag': tag, 'data': data});
+    return await invoke<void>('command_append_record', { 'tag': tag, 'data': data });
 }
 
 export async function commandLastRecord(): Promise<CsvRecord | null> {
@@ -35,7 +35,7 @@ export async function commandPopRecord(): Promise<CsvRecord | null> {
 }
 
 export async function commandSaveRecords(path: string): Promise<void> {
-    return await invoke<void>('command_save_records', {'path': path});
+    return await invoke<void>('command_save_records', { 'path': path });
 }
 
 export async function commandRecordsLen(): Promise<number> {

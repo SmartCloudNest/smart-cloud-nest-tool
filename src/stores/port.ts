@@ -10,7 +10,7 @@ export enum SerialState {
 }
 
 export const usePortStore = defineStore('port', () => {
-    const dataGrid = ref<number[][]>(new Array(16).fill(new Array(10).fill(0)));
+    const dataGrid = ref<number[][]>(new Array(10).fill(new Array(16).fill(0)));
     const serialports = ref<string[]>([]);
     const port = ref<string | null>(null);
     const serialState = ref<SerialState>(SerialState.Disconnected);
@@ -26,11 +26,7 @@ export const usePortStore = defineStore('port', () => {
         try {
             dataGrid.value = await commandGetDataGrid();
         } catch (err) {
-            try {
-                await connectPort();
-            } catch (internalErr) {
-                throw new Error(`${internalErr}`);
-            }
+            serialState.value = SerialState.Disconnected;
             throw new Error(`${err}`);
         }
     };
@@ -49,6 +45,7 @@ export const usePortStore = defineStore('port', () => {
             await commandConnectPort(port.value);
             serialState.value = SerialState.Connected;
         } catch (err) {
+            serialState.value = SerialState.Disconnected;
             throw new Error(`${err}`);
         }
     }
