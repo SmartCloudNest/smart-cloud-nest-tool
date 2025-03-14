@@ -1,14 +1,19 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { commandAppendRecord, commandLastRecord, commandPopRecord, commandRecordsLen, commandSaveRecords, commandResetRecords, CsvRecord } from '../commands';
 import { defineStore } from 'pinia';
 
+<<<<<<< HEAD
 export type Tags = 'layflat' | 'leftside' | 'rightside';
 
 export const useRecordStore = defineStore('record', () => {
+=======
+export const usePortStore = defineStore('port', () => {
+>>>>>>> parent of 308d624 (Finished Some works)
     const recordLength = ref<number>(0);
     const lastRecord = ref<CsvRecord | null>(null);
-    const lastDeleted = ref<CsvRecord | null>(null);
+    const
 
+<<<<<<< HEAD
     async function updateMetaData() {
         recordLength.value = await commandRecordsLen();
         lastRecord.value = await commandLastRecord();
@@ -60,4 +65,6 @@ export const useRecordStore = defineStore('record', () => {
         lastRecord,
         lastDeleted
     }
+=======
+>>>>>>> parent of 308d624 (Finished Some works)
 });
