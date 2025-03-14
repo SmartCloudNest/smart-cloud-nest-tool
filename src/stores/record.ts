@@ -2,9 +2,9 @@ import { ref } from 'vue';
 import { commandAppendRecord, commandLastRecord, commandPopRecord, commandRecordsLen, commandSaveRecords, commandResetRecords, CsvRecord } from '../commands';
 import { defineStore } from 'pinia';
 
+export type Tags = 'layflat' | 'leftside' | 'rightside';
 
-
-export const usePortStore = defineStore('port', () => {
+export const useRecordStore = defineStore('record', () => {
     const recordLength = ref<number>(0);
     const lastRecord = ref<CsvRecord | null>(null);
     const lastDeleted = ref<CsvRecord | null>(null);
@@ -14,7 +14,7 @@ export const usePortStore = defineStore('port', () => {
         lastRecord.value = await commandLastRecord();
     }
 
-    async function appendRecord(tag: string, data: number[][]) {
+    async function appendRecord(tag: Tags, data: number[][]) {
         commandAppendRecord(tag, JSON.stringify(data).toString());
         try {
             await updateMetaData();

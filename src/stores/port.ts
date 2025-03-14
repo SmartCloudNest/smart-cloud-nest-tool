@@ -50,6 +50,22 @@ export const usePortStore = defineStore('port', () => {
         }
     }
 
+    const tagText = computed(() => {
+        switch (serialState.value) {
+          case SerialState.Connected: return `已连接: ${port.value}`;
+          case SerialState.Connecting: return `正在连接: ${port.value}`;
+          default: return '未连接任何设备';
+        }
+      });
+    
+      const tagType = computed(() => {
+        switch (serialState.value) {
+          case SerialState.Connected: return 'success';
+          case SerialState.Connecting: return 'info';
+          default: return 'warning';
+        }
+      });
+
     const isDisconnected = computed(() => serialState.value === SerialState.Disconnected);
     const isConnecting = computed(() => serialState.value === SerialState.Connecting);
     const isConnected = computed(() => serialState.value === SerialState.Connected);
@@ -60,6 +76,8 @@ export const usePortStore = defineStore('port', () => {
         resetSerialport,
         connectPort,
 
+        tagText,
+        tagType,
         dataGrid,
         serialports,
         serialState,
