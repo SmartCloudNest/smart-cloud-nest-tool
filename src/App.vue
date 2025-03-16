@@ -17,6 +17,7 @@ import {
   commandResetRecords,
   commandRecordsLen,
   commandLastRecord,
+  CsvRecord,
 } from './commands';
 import DataGrid from './components/DataGrid.vue';
 import { save } from '@tauri-apps/plugin-dialog';
