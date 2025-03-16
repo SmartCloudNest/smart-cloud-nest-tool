@@ -47,6 +47,7 @@ pub async fn command_get_serialports() -> Vec<String> {
 
 #[command]
 pub async fn command_append_record(state: TauriAppState<'_>, tag: String, data: String) -> Result<(), String> {
+    println!("Received command_append_record - tag: {}, data: {:?}", tag, data);
     state
         .lock()
         .await

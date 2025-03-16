@@ -22,7 +22,7 @@ export async function commandResetPort() {
     return await invoke<void>('command_reset_port', {});
 }
 
-export async function commandAppendRecord(tag: string, data: string): Promise<void> {
+export async function commandAppendRecord(tag: string, data: number[][]): Promise<void> {
     return await invoke<void>('command_append_record', { 'tag': tag, 'data': data });
 }
 

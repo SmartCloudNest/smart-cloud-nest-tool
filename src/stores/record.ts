@@ -15,7 +15,8 @@ export const useRecordStore = defineStore('record', () => {
     }
 
     async function appendRecord(tag: string, data: number[][]) {
-        commandAppendRecord(tag, JSON.stringify(data));
+        console.log('Calling commandAppendRecord with tag:', tag, 'and data:', data);
+        commandAppendRecord(tag, data.map(row => row.map(val => parseFloat(val.toFixed(2)))));
         try {
             await updateMetaData();
         } catch (err) {

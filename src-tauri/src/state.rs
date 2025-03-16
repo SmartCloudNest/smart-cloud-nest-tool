@@ -50,8 +50,12 @@ pub fn get_serialports() -> Vec<String> {
 }
 
 impl AppState {
-    pub fn append_record(&mut self, tag: String, data: String) {
-        self.record.append(tag, data);
+    pub fn append_record(&mut self, tag: String, data: Vec<Vec<f64>>) {
+        println!("Appending record - tag: {}, data: {:?}", tag, data);
+        let json_data = serde_json::to_string(&data).unwrap();
+        println!("Serialized data: {}", json_data);
+        self.record.append(tag, json_data);
+        println!("Current record count: {}", self.record.col_len());
     }
 
     pub fn last_record(&self) -> Option<CsvRecord> {

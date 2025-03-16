@@ -18,12 +18,14 @@ pub struct CsvSheet {
 
 impl CsvSheet {
     pub fn append(&mut self, tag: String, data: String) {
+        println!("Received record - tag: {}, data: {}", tag, data);
         let record = CsvRecord {
             time: Utc::now().timestamp(),
             tag,
             data
         };
         self.col.push(record);
+        println!("Record added to collection");
     }
 
     pub fn last(&self) -> Option<CsvRecord> {
