@@ -1,8 +1,7 @@
 <script setup lang='ts'>
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { NSelect, NTag, NSpace, NText } from 'naive-ui';
 import { usePortStore, SerialState } from '../stores/port';
-import { sleep } from '../utils';
 
 const portStore = usePortStore();
 
