@@ -15,7 +15,8 @@ export const useRecordStore = defineStore('record', () => {
     }
 
     async function appendRecord(tag: string, data: number[][]) {
-        await commandAppendRecord(tag, data.toString());
+        const time = Date.now();
+        await commandAppendRecord(time, tag, JSON.stringify(data));
         await updateMetaData();
     }
 

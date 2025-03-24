@@ -46,11 +46,11 @@ pub async fn command_get_serialports() -> Vec<String> {
 }
 
 #[command]
-pub async fn command_append_record(state: TauriAppState<'_>, tag: String, data: String) -> Result<(), String> {
+pub async fn command_append_record(state: TauriAppState<'_>, time: i64, tag: String, data: String) -> Result<(), String> {
     state
         .lock()
         .await
-        .append_record(tag, data);
+        .append_record(time, tag, data);
     Ok(())
 }
 

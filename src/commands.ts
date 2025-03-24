@@ -22,8 +22,8 @@ export async function commandResetPort() {
     return await invoke<void>('command_reset_port', {});
 }
 
-export async function commandAppendRecord(tag: string, data: string): Promise<void> {
-    return await invoke<void>('command_append_record', { 'tag': tag, 'data': data });
+export async function commandAppendRecord(time: number, tag: string, data: string): Promise<void> {
+    return await invoke<void>('command_append_record', { time, tag, data });
 }
 
 export async function commandLastRecord(): Promise<CsvRecord | null> {

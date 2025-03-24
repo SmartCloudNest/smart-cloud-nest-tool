@@ -50,8 +50,8 @@ pub fn get_serialports() -> Vec<String> {
 }
 
 impl AppState {
-    pub fn append_record(&mut self, tag: String, data: String) {
-        self.record.append(tag, data);
+    pub fn append_record(&mut self, time:i64, tag: String, data: String) {
+        self.record.append(time, tag, data );
     }
 
     pub fn last_record(&self) -> Option<CsvRecord> {

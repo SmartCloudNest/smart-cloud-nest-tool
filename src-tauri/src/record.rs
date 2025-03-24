@@ -17,9 +17,9 @@ pub struct CsvSheet {
 }
 
 impl CsvSheet {
-    pub fn append(&mut self, tag: String, data: String) {
+    pub fn append(&mut self, time: i64, tag: String, data: String) {
         let record = CsvRecord {
-            time: Utc::now().timestamp(),
+            time,
             tag,
             data
         };
