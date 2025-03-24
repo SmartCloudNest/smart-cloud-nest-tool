@@ -11,8 +11,8 @@ const portStore = usePortStore();
 
 <template>
   <!-- 数据展示 -->
-  <div style='margin-top: 24px'>
-    <n-grid :cols='16' :x-gap='8' :y-gap='8' style='margin-top: 24px'>
+  <div>
+    <n-grid :cols='16' :x-gap='8' :y-gap='8' style='margin-top: 12px'>
       <template v-for='(row, rowIndex) in portStore.dataGrid'>
         <n-grid-item v-for='(value, colIndex) in row'>
           <div class='data-item'>
