@@ -4,19 +4,16 @@ import {
   NGridItem,
   NText
 } from 'naive-ui';
+import { usePortStore } from '../stores/port';
 
-interface Props {
-  dataGrid: number[][];
-}
-
-defineProps<Props>();
+const portStore = usePortStore();
 </script>
 
 <template>
   <!-- 数据展示 -->
   <div style='margin-top: 24px'>
     <n-grid :cols='16' :x-gap='8' :y-gap='8' style='margin-top: 24px'>
-      <template v-for='(row, rowIndex) in dataGrid'>
+      <template v-for='(row, rowIndex) in portStore.dataGrid'>
         <n-grid-item v-for='(value, colIndex) in row'>
           <div class='data-item'>
             <n-text type='info' depth='3'>[{{ rowIndex }},{{ colIndex }}]</n-text>
