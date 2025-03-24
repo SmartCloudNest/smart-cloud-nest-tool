@@ -1,6 +1,5 @@
 use std::path::PathBuf;
 use anyhow::Result;
-use chrono::Utc;
 use csv::Writer;
 use serde::{Deserialize, Serialize};
 
