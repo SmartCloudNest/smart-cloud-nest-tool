@@ -8,7 +8,6 @@ export const useRecordStore = defineStore('record', () => {
     const recordLength = ref<number>(0);
     const lastRecord = ref<CsvRecord | null>(null);
     const lastDeleted = ref<CsvRecord | null>(null);
-    const recordMsg = ref<string>('');
 
     async function updateMetaData() {
         recordLength.value = await commandRecordsLen();
@@ -21,7 +20,7 @@ export const useRecordStore = defineStore('record', () => {
     }
 
     async function popRecord() {
-        await commandPopRecord();
+        lastDeleted.value = await commandPopRecord();
         await updateMetaData();
     }
 
@@ -48,6 +47,5 @@ export const useRecordStore = defineStore('record', () => {
         recordLength,
         lastRecord,
         lastDeleted,
-        recordMsg,
     }
 });
