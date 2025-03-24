@@ -35,32 +35,32 @@ const tagType = computed(() => {
   }
 });
 
-const updateDataGridTask = ref<number | null>(null);
+// const updateDataGridTask = ref<number | null>(null);
 
-watch(() => portStore.serialState, async () => {
-  if (portStore.isConnecting) {
-    return;
-  }
-  if (portStore.isConnected) {
-    updateDataGridTask.value = setInterval(portStore.updateDataGrid, 72);
-    return;
-  }
-  if (portStore.isDisconnected && updateDataGridTask.value) {
-    clearInterval(updateDataGridTask.value);
-  }
-  try {
-    await portStore.connectPort();
-  } catch (err) {
-    await sleep(330);
-    throw err;
-  }
-});
+// watch(() => portStore.serialState, async () => {
+//   if (portStore.isConnecting) {
+//     return;
+//   }
+//   if (portStore.isConnected) {
+//     updateDataGridTask.value = setInterval(portStore.updateDataGrid, 72);
+//     return;
+//   }
+//   if (portStore.isDisconnected && updateDataGridTask.value) {
+//     clearInterval(updateDataGridTask.value);
+//   }
+//   try {
+//     await portStore.connectPort();
+//   } catch (err) {
+//     await sleep(330);
+//     throw err;
+//   }
+// });
 
-onUnmounted(() => {
-  if (updateDataGridTask.value) {
-    clearInterval(updateDataGridTask.value);
-  }
-});
+// onUnmounted(() => {
+//   if (updateDataGridTask.value) {
+//     clearInterval(updateDataGridTask.value);
+//   }
+// });
 </script>
 
 <template>
