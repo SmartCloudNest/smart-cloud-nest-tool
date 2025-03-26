@@ -3,8 +3,8 @@ name: Tauri Build
 on:
   push:
     branches: [ main ]
-    paths: [ '**' ]  # 监控所有文件变更
-  workflow_dispatch:  # 添加手动触发选项
+    paths: [ '**' ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,24 +23,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      # 添加环境检查步骤
-      - name: Check Workflow Permissions
-        run: |
-          echo "GITHUB_ACTOR: $GITHUB_ACTOR"
-          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
-          ls -la .github/workflows/
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: 18
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Cache Bun
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          profile: minimal
           toolchain: stable
-          target: ${{ matrix.target }}
+          targets: ${{ matrix.target }}
 
       - name: Build Application
         uses: tauri-apps/tauri-action@v0
@@ -53,10 +65,11 @@ jobs:
           args: --target ${{ matrix.target }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tauri-build-${{ matrix.os }}
           path: |
             src-tauri/target/release/*.dmg
             src-tauri/target/release/*.app.tar.gz
             src-tauri/target/release/*.msi
+          compression-level: 9
