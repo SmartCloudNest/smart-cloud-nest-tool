@@ -1,16 +1,94 @@
-# Tauri + Vue + TypeScript
+# 智能云眠数据采集工具
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+基于Vue3 + Tauri构建的跨平台桌面应用，用于智能云眠设备的串口数据采集与分析
 
-## Recommended IDE Setup
+## 技术栈
+- **前端框架**: Vue 3 + TypeScript
+- **桌面运行时**: Tauri (Rust)
+- **构建工具**: Vite
+- **UI组件**: Naive UI
+- **串口通信**: WebSerial API + Rust后端
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## 功能特性
+- 📡 实时串口数据监控与采集
+- 📊 数据可视化展示
+- ⚡ 数据导出功能
+- 🖥️ 跨平台运行（Windows/macOS/Linux）
 
-## Type Support For `.vue` Imports in TS
+## 快速开始
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+### 环境要求
+- Rust 1.81.x
+- bun 1.1.*
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+### 安装步骤
+```bash
+# 安装依赖
+bun install
+```
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+## 项目结构
+```
+├── public/                # 静态资源
+│   ├── tauri.svg          # Tauri图标
+│   └── vite.svg           # Vite图标
+├── src/                   # 前端源码
+│   ├── assets/            # 静态资源
+│   ├── components/        # Vue组件
+│   │   ├── DataGrid.vue   # 数据表格组件
+│   │   ├── RecordPanel.vue # 记录控制面板
+│   │   └── SerialPanel.vue # 串口控制面板
+│   ├── hooks/             # 自定义Hook
+│   ├── stores/            # Pinia状态管理
+│   │   ├── port.ts        # 串口状态管理
+│   │   └── record.ts      # 数据记录状态
+│   ├── App.vue            # 根组件
+│   ├── main.ts            # 应用入口
+│   └── vite-env.d.ts      # 类型声明
+│
+├── src-tauri/             # Tauri后端
+│   ├── src/               # Rust源码
+│   │   ├── commands.rs    # 前后端通信命令
+│   │   ├── serial.rs      # 串口通信实现
+│   │   └── config.rs      # 应用配置
+│   └── tauri.conf.json    # Tauri配置文件
+│
+├── package.json           # 前端依赖
+├── tsconfig.json          # TypeScript配置
+└── vite.config.ts         # Vite配置
+```
+
+## 配置说明
+### 前端配置
+- `vite.config.ts`: 构建工具配置
+
+### 后端配置
+- `src-tauri/tauri.conf.json`: 应用窗口设置/权限配置
+- `src-tauri/src/config.rs`: 串口超时设置/缓存大小
+- `src-tauri/src/commands.rs`: 前后端通信协议定义
+
+## 开发指南
+```bash
+# 运行应用
+bun tauri dev
+```
+
+## 构建命令
+```bash
+# 构建项目
+bun tauri build
+```
+
+## 贡献指南
+1. 提升权限（联系qume2005）
+2. 创建特性分支 (`git checkout -b {name}/新功能`)
+3. 提交修改 (`git commit -am '添加新功能'`)
+4. 推送分支 (`git push origin {name}/新功能`)
+5. 创建Pull Request
+
+## 许可证
+MIT License © 2025 智能云眠团队
+
+## 常见问题
+Q: 无法检测到串口设备？
+A: 请检查设备是否能正常检测传感器，若确认传感器能被检测但无法连接请提交issue。
