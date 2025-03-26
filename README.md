@@ -1,4 +1,4 @@
-# 智能云眠数据采集工具 [![Release Build](https://github.com/SmartCloudNest/smart-cloud-nest-tool/actions/workflows/release.yml/badge.svg)](https://github.com/SmartCloudNest/smart-cloud-nest-tool/actions/workflows/release.yml)
+# 智能云眠数据采集工具 [![publish](https://github.com/SmartCloudNest/smart-cloud-nest-tool/actions/workflows/publish.yml/badge.svg)](https://github.com/SmartCloudNest/smart-cloud-nest-tool/actions/workflows/publish.yml)
 
 基于Vue3 + Tauri构建的跨平台桌面应用，用于智能云眠设备的串口数据采集与分析
 
