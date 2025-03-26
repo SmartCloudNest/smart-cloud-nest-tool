@@ -3,7 +3,8 @@ name: Tauri Build
 on:
   push:
     branches: [ main ]
-    paths: [ 'src-tauri/**', 'src/**' ]
+    paths: [ '**' ]  # 监控所有文件变更
+  workflow_dispatch:  # 添加手动触发选项
 
 jobs:
   build:
@@ -21,6 +22,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      # 添加环境检查步骤
+      - name: Check Workflow Permissions
+        run: |
+          echo "GITHUB_ACTOR: $GITHUB_ACTOR"
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+          ls -la .github/workflows/
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -40,7 +48,7 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
         with:
-          tagName: v__VERSION__ # 自动版本管理
+          tagName: v__VERSION__
           release: true
           args: --target ${{ matrix.target }}
 
