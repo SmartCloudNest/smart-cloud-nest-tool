@@ -23,6 +23,10 @@
 
 ### 安装步骤
 ```bash
+#克隆项目
+gh repo clone SmartCloudNest/smart-cloud-nest-tool
+#切换项目路径
+cd ./smart-cloud-nest-tool
 # 安装依赖
 bun install
 ```
