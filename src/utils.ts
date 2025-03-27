@@ -1,4 +1,4 @@
-import { save } from "@tauri-apps/plugin-dialog";
+import { save } from '@tauri-apps/plugin-dialog';
 
 export async function saveDialog(): Promise<string> {
     try {

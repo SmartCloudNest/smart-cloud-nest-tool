@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { NText, NButtonGroup, NButton, NIcon, NPopconfirm } from 'naive-ui';
 import { useRecordStore } from '../stores/record';
 import { Pricetag, Document } from '@vicons/ionicons5';
@@ -45,41 +45,41 @@ async function handleLayflat() {
 
 <template>
   <div class='record-panel'> 
-    <n-text class="tag-title">打标签</n-text>
-    <n-button-group size="small">
-      <n-button type="default" @click="handleLeftside" :disabled="!portStore.isConnected" round>
+    <n-text class='tag-title'>打标签</n-text>
+    <n-button-group size='small'>
+      <n-button type='default' @click='handleLeftside' :disabled='!portStore.isConnected' round>
         <template #icon>
-          <n-icon class="tag-icon"><Pricetag /></n-icon>
+          <n-icon class='tag-icon'><Pricetag /></n-icon>
         </template>
         左侧躺
       </n-button>
-      <n-button type="default" @click="handleRightside" :disabled="!portStore.isConnected">
+      <n-button type='default' @click='handleRightside' :disabled='!portStore.isConnected'>
         <template #icon>
-          <n-icon class="tag-icon"><Pricetag /></n-icon>
+          <n-icon class='tag-icon'><Pricetag /></n-icon>
         </template>
         右侧躺
       </n-button>
-      <n-button type="default" @click="handleLayflat" :disabled="!portStore.isConnected">
+      <n-button type='default' @click='handleLayflat' :disabled='!portStore.isConnected'>
         <template #icon>
-          <n-icon class="tag-icon"><Pricetag /></n-icon>
+          <n-icon class='tag-icon'><Pricetag /></n-icon>
         </template>
         平躺
       </n-button>
-      <n-button type="default" @click="handleSave" :disabled="!recordStore.recordLength">
+      <n-button type='default' @click='handleSave' :disabled='!recordStore.recordLength'>
         <template #icon>
-          <n-icon class="tag-icon"><Document /></n-icon>
+          <n-icon class='tag-icon'><Document /></n-icon>
         </template>
         保存
       </n-button>
       <n-popconfirm
-        @positive-click="recordStore.popRecord"
-        @negative-click=""
-        positive-text="确认✅" negative-text="取消❌"
+        @positive-click='recordStore.popRecord'
+        @negative-click=''
+        positive-text='确认✅' negative-text='取消❌'
       >
         <template #trigger>
-          <n-button :disabled="!recordStore.recordLength">
+          <n-button :disabled='!recordStore.recordLength'>
             <template #icon>
-              <n-icon class="tag-icon"><Important12Filled /></n-icon>
+              <n-icon class='tag-icon'><Important12Filled /></n-icon>
             </template>
             删除上一个
           </n-button>
@@ -87,14 +87,14 @@ async function handleLayflat() {
         请确认！
       </n-popconfirm>
       <n-popconfirm
-        @positive-click="recordStore.resetRecords"
-        @negative-click=""
-        positive-text="确认✅" negative-text="取消❌"
+        @positive-click='recordStore.resetRecords'
+        @negative-click=''
+        positive-text='确认✅' negative-text='取消❌'
       >
         <template #trigger>
-          <n-button :disabled="!recordStore.recordLength">
+          <n-button :disabled='!recordStore.recordLength'>
             <template #icon>
-              <n-icon class="tag-icon"><Important12Filled /></n-icon>
+              <n-icon class='tag-icon'><Important12Filled /></n-icon>
             </template>
             清空记录
           </n-button>
@@ -102,7 +102,7 @@ async function handleLayflat() {
         此操作不可恢复，请谨慎操作！
       </n-popconfirm>
     </n-button-group>
-    <n-text v-if="recordStore.lastRecord"> 上一个标签: time: {{new Date(recordStore.lastRecord.time).toISOString()}}, tag: {{recordStore.lastRecord.tag}}</n-text>
+    <n-text v-if='recordStore.lastRecord'> 上一个标签: time: {{new Date(recordStore.lastRecord.time).toISOString()}}, tag: {{recordStore.lastRecord.tag}}</n-text>
   </div>
 </template>
 
