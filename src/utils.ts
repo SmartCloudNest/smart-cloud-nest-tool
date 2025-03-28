@@ -4,7 +4,7 @@ export async function saveDialog(): Promise<string> {
     try {
       const path = await save({
         title: '创建新的数据集',
-        defaultPath: 'jq-dataset.csv',
+        defaultPath: 'dataset.csv',
         filters: [{
           name: 'Dataset',
           extensions: ['csv'],
